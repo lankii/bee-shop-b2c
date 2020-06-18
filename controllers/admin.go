@@ -55,7 +55,7 @@ func (c *AdminController) Post() {
 // @router /:id [get]
 func (c *AdminController) GetOne() {
 	idStr := c.Ctx.Input.Param(":id")
-	id, _ := strconv.Atoi(idStr)
+	id, _ := strconv.ParseInt(idStr, 10, 64)
 	v, err := models.GetAdminById(id)
 	if err != nil {
 		c.Data["json"] = err.Error()
@@ -138,7 +138,7 @@ func (c *AdminController) GetAll() {
 // @router /:id [put]
 func (c *AdminController) Put() {
 	idStr := c.Ctx.Input.Param(":id")
-	id, _ := strconv.Atoi(idStr)
+	id, _ := strconv.ParseInt(idStr, 10, 64)
 	v := models.Admin{Id: id}
 	if err := json.Unmarshal(c.Ctx.Input.RequestBody, &v); err == nil {
 		if err := models.UpdateAdminById(&v); err == nil {
@@ -161,7 +161,7 @@ func (c *AdminController) Put() {
 // @router /:id [delete]
 func (c *AdminController) Delete() {
 	idStr := c.Ctx.Input.Param(":id")
-	id, _ := strconv.Atoi(idStr)
+	id, _ := strconv.ParseInt(idStr, 10, 64)
 	if err := models.DeleteAdmin(id); err == nil {
 		c.Data["json"] = "OK"
 	} else {

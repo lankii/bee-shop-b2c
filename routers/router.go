@@ -8,7 +8,7 @@
 package routers
 
 import (
-	"cleverbamboo.com/bee-shop-b2c/api"
+	"cleverbamboo.com/bee-shop-b2c/api/admin"
 	"cleverbamboo.com/bee-shop-b2c/controllers"
 
 	"github.com/astaxie/beego"
@@ -32,6 +32,8 @@ func init() {
 		beego.NSNamespace("/admin",
 			beego.NSInclude(
 				&controllers.AdminController{},
+				&admin.IndexController{},
+				&admin.AccountController{},
 			),
 		),
 
@@ -152,7 +154,6 @@ func init() {
 		beego.NSNamespace("/member",
 			beego.NSInclude(
 				&controllers.MemberController{},
-				&api.AccountController{},
 			),
 		),
 

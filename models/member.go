@@ -52,7 +52,6 @@ type Member struct {
 	LastUpdatedBy     string    `orm:"column(last_updated_by);size(20);null" description:"最后修改人"`
 	LastUpdatedDate   time.Time `orm:"column(last_updated_date);auto_now;type(datetime);null" description:"最后修改日期"`
 	DeleteFlag        int8      `orm:"column(delete_flag)" description:"删除标记"`
-	Role          string    `orm:"-" description:"权限:1超级管理员, 2系统管理员, 3会员, 4普通用户"`
 }
 
 func (t *Member) TableName() string {
@@ -61,10 +60,6 @@ func (t *Member) TableName() string {
 
 func init() {
 	orm.RegisterModel(new(Member))
-}
-
-func NewMember() *Member {
-	return &Member{}
 }
 
 // AddMember insert a new Member into database and returns
@@ -86,7 +81,8 @@ func GetMemberById(id int) (v *Member, err error) {
 	return nil, err
 }
 
-// 根据 username 获取Member
+// GetMemberByUsername retrieves Member by Username. Returns error if
+// Id doesn't exist
 func GetMemberByUsername(username string) (v *Member, err error) {
 	o := orm.NewOrm()
 	v = &Member{Username: username}
