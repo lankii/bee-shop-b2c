@@ -11,26 +11,27 @@ import (
 )
 
 type Admin struct {
-	Id                int64     `orm:"column(id);auto" description:"主键_id" json:"id"`
-	BigId             string    `orm:"-"  description:"辅助主键_id" json:"big_id"`
-	Name              string    `orm:"column(name);size(255)" description:"姓名" json:"name"`
-	Username          string    `orm:"column(username);size(100)" description:"用户名" json:"username"`
-	Password          string    `orm:"column(password);size(255)" description:"密码" json:"password"`
-	Hasher            string    `orm:"column(hasher);size(200)" description:"加密类型" json:"hasher"`
-	Salt              string    `orm:"column(salt);size(200)" description:"加密盐" json:"salt"`
-	Department        string    `orm:"column(department);size(255);null" description:"部门" json:"department"`
-	Email             string    `orm:"column(email);size(255)" description:"E-mail" json:"email"`
-	IsEnabled         int8      `orm:"column(is_enabled)" description:"是否启用" json:"is_enabled"`
-	IsLocked          int8      `orm:"column(is_locked)" description:"是否锁定" json:"is_locked"`
-	LockedDate        time.Time `orm:"column(locked_date);type(datetime);null" description:"锁定日期" json:"locked_date"`
-	LoginDate         time.Time `orm:"column(login_date);auto_now;type(datetime);null" description:"最后登录日期" json:"login_date"`
-	LoginIp           string    `orm:"column(login_ip);size(255);null" description:"最后登录IP " json:"login_ip"`
-	LoginFailureCount int       `orm:"column(login_failure_count)" description:"连续登录失败次数" json:"login_failure_count"`
-	CreateBy          string    `orm:"column(create_by);size(20);null" description:"创建人" json:"create_by"`
-	CreationDate      time.Time `orm:"column(creation_date);auto_now_add;type(datetime);null" description:"创建日期" json:"creation_date"`
-	LastUpdatedBy     string    `orm:"column(last_updated_by);size(20);null" description:"最后修改人" json:"last_updated_by"`
-	LastUpdatedDate   time.Time `orm:"column(last_updated_date);auto_now;type(datetime);null" description:"最后修改日期" json:"last_updated_date"`
-	DeleteFlag        int8      `orm:"column(delete_flag)" description:"删除标记" json:"delete_flag"`
+	Id                int64     `orm:"column(id);auto" description:"主键_id"`
+	BigId             string    `orm:"-"  description:"辅助主键_id"`
+	Name              string    `orm:"column(name);size(255)" description:"姓名"`
+	Username          string    `orm:"column(username);size(100)" description:"用户名"`
+	Password          string    `orm:"column(password);size(255)" description:"密码"`
+	Hasher            string    `orm:"column(hasher);size(200)" description:"加密类型"`
+	Salt              string    `orm:"column(salt);size(200)" description:"加密盐"`
+	Department        string    `orm:"column(department);size(255);null" description:"部门"`
+	Email             string    `orm:"column(email);size(255)" description:"E-mail"`
+	IsEnabled         int8      `orm:"column(is_enabled)" description:"是否启用"`
+	IsLocked          int8      `orm:"column(is_locked)" description:"是否锁定"`
+	LockedDate        time.Time `orm:"column(locked_date);type(datetime);null" description:"锁定日期"`
+	LoginDate         time.Time `orm:"column(login_date);type(datetime);null" description:"最后登录日期"`
+	LoginIp           string    `orm:"column(login_ip);size(255);null" description:"最后登录IP "`
+	LoginFailureCount int       `orm:"column(login_failure_count)" description:"连续登录失败次数"`
+	CreateBy          string    `orm:"column(create_by);size(20);null" description:"创建人"`
+	CreationDate      time.Time `orm:"column(creation_date);auto_now_add;type(datetime);null" description:"创建日期"`
+	LastUpdatedBy     string    `orm:"column(last_updated_by);size(20);null" description:"最后修改人"`
+	LastUpdatedDate   time.Time `orm:"column(last_updated_date);auto_now;type(datetime);null" description:"最后修改日期"`
+	DeleteFlag        int8      `orm:"column(delete_flag)" description:"删除标记"`
+	RoleId            int64     `orm:"-" description:"权限名称"`
 }
 
 func (t *Admin) TableName() string {

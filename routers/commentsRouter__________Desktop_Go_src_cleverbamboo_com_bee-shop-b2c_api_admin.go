@@ -34,4 +34,13 @@ func init() {
             Filters: nil,
             Params: nil})
 
+    beego.GlobalControllerRouter["cleverbamboo.com/bee-shop-b2c/api/admin:IndexController"] = append(beego.GlobalControllerRouter["cleverbamboo.com/bee-shop-b2c/api/admin:IndexController"],
+        beego.ControllerComments{
+            Method: "UpdateAdmin",
+            Router: "/update",
+            AllowHTTPMethods: []string{"post"},
+            MethodParams: param.Make(),
+            Filters: nil,
+            Params: nil})
+
 }
