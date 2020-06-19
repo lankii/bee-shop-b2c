@@ -1,4 +1,4 @@
-package admin
+package api
 
 import (
 	"cleverbamboo.com/bee-shop-b2c/common"
@@ -9,13 +9,13 @@ import (
 
 type BaseController struct {
 	beego.Controller
-	Admin *models.Admin //用户
+	Admin *models.Admin // 用户
 }
 
-//每个子类Controller公用方法调用前，都执行一下Prepare方法
+// 每个子类Controller公用方法调用前，都执行一下Prepare方法
 func (c *BaseController) Prepare() {
-	c.Admin = &models.Admin{} //初始化
-	//从session中获取用户信息
+	c.Admin = &models.Admin{} // 初始化
+	// 从session中获取用户信息
 	if admin, ok := c.GetSession(common.SessionName).(models.Admin); ok && admin.Id > 0 {
 		logs.Info("admin", admin)
 		c.Admin = &admin
