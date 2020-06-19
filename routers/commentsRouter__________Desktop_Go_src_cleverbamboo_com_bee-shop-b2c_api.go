@@ -9,7 +9,7 @@ func init() {
 
     beego.GlobalControllerRouter["cleverbamboo.com/bee-shop-b2c/api:AdminController"] = append(beego.GlobalControllerRouter["cleverbamboo.com/bee-shop-b2c/api:AdminController"],
         beego.ControllerComments{
-            Method: "GetAllAdmins",
+            Method: "GetAdmins",
             Router: "/all",
             AllowHTTPMethods: []string{"get"},
             MethodParams: param.Make(),
@@ -39,6 +39,15 @@ func init() {
             Method: "UpdateAdmin",
             Router: "/update",
             AllowHTTPMethods: []string{"post"},
+            MethodParams: param.Make(),
+            Filters: nil,
+            Params: nil})
+
+    beego.GlobalControllerRouter["cleverbamboo.com/bee-shop-b2c/api:ProductController"] = append(beego.GlobalControllerRouter["cleverbamboo.com/bee-shop-b2c/api:ProductController"],
+        beego.ControllerComments{
+            Method: "GetProducts",
+            Router: "/all",
+            AllowHTTPMethods: []string{"get"},
             MethodParams: param.Make(),
             Filters: nil,
             Params: nil})

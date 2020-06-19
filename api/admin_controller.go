@@ -4,7 +4,6 @@ import (
 	"cleverbamboo.com/bee-shop-b2c/common"
 	"cleverbamboo.com/bee-shop-b2c/helpers"
 	"cleverbamboo.com/bee-shop-b2c/models"
-	"errors"
 	"regexp"
 	"strconv"
 	"strings"
@@ -19,7 +18,7 @@ type AdminController struct {
 func (c *AdminController) URLMapping() {
 	c.Mapping("Login", c.Login)
 	c.Mapping("Register", c.Register)
-	c.Mapping("GetAllAdmins", c.GetAllAdmins)
+	c.Mapping("GetAllAdmins", c.GetAdmins)
 	c.Mapping("UpdateAdmin", c.UpdateAdmin)
 }
 
@@ -70,7 +69,7 @@ func (c *AdminController) Login() {
 
 // Register ...
 // @Title Register
-// @Description Admin Login
+// @Description Admin Register
 // @Param username  body string  true  "Register username"
 // @Param password1 body string  true  "Register password1"
 // @Param password2 body string  true  "Register password2"
@@ -154,16 +153,16 @@ func (c *AdminController) Register() {
 	}
 }
 
-// GetAllAdmins ...
-// @Title Get All Admins
-// @Description get All Admins
+// GetAdmins ...
+// @Title Get Admin List
+// @Description Get Admin list by some info
 // @Param	query	    query	string	false	"Filter. e.g. col1:v1,col2:v2 ..."
 // @Param	sortby	    query	string	false	"Sorted-by fields. e.g. col1,col2 ..."
 // @Param	order	    query	string	false	"Order corresponding to each sortby field, if single value, apply to all sortby fields. e.g. desc,asc ...
 // @Param	pageNumber	query	string	false	"Start position of result set. Must be an integer"
 // @Param	pageSize	query	int	    false	"Limit the size of result set. Must be an integer"
 // @router /all [get]
-func (c *AdminController) GetAllAdmins() {
+func (c *AdminController) GetAdmins() {
 	var sortby []string
 	var order []string
 	var query = make(map[string]string)
@@ -183,8 +182,7 @@ func (c *AdminController) GetAllAdmins() {
 		for _, cond := range strings.Split(v, ",") {
 			kv := strings.SplitN(cond, ":", 2)
 			if len(kv) != 2 {
-				c.Data["json"] = errors.New("Error: invalid query key/value pair")
-				c.ServeJSON()
+				c.JsonResult(common.GetHttpStatus("ok"), common.ErrError, "fail", "Error: invalid query key/value pair")
 				return
 			}
 			k, v := kv[0], kv[1]
@@ -231,7 +229,7 @@ func (c *AdminController) GetAllAdmins() {
 
 // UpdateAdmin ...
 // @Title Update Admin
-// @Description update Admin
+// @Description update Admin by some info
 // @Param id         body string  true  "Admin Id"
 // @Param password1  body string  true  "Should update Admin password1"
 // @Param password2  body string  true  "Should update Admin password2"
