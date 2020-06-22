@@ -153,90 +153,10 @@ func (c *AdminController) Register() {
 	}
 }
 
-// GetAdmins ...
-// @Title Get Admin List
-// @Description Get Admin list by some info
-// @Param	query	    query	string	false	"Filter. e.g. col1:v1,col2:v2 ..."
-// @Param	sortby	    query	string	false	"Sorted-by fields. e.g. col1,col2 ..."
-// @Param	order	    query	string	false	"Order corresponding to each sortby field, if single value, apply to all sortby fields. e.g. desc,asc ...
-// @Param	sortby	query	string	false	"Sorted-by fields. e.g. col1,col2 ..."
-// @Param	pageNumber	query	string	false	"Start position of result set. Must be an integer"
-// @Param	pageSize	query	int	    false	"Limit the size of result set. Must be an integer"
-// @router /all [get]
-func (c *AdminController) GetAdmins() {
-	var fields []string
-	var sortby []string
-	var order []string
-	var query = make(map[string]string)
-	var pageSize int64 = 10
-	var pageNumber int64
-
-	// fields: col1,col2,entity.col3
-	if v := c.GetString("fields"); v != "" {
-		fields = strings.Split(v, ",")
-	}
-	// sortby: col1,col2
-	if v := c.GetString("sortby"); v != "" {
-		sortby = strings.Split(v, ",")
-	}
-	// order: desc,asc
-	if v := c.GetString("order"); v != "" {
-		order = strings.Split(v, ",")
-	}
-	// query: k:v,k:v
-	if v := c.GetString("query"); v != "" {
-		for _, cond := range strings.Split(v, ",") {
-			kv := strings.SplitN(cond, ":", 2)
-			if len(kv) != 2 {
-				c.JsonResult(common.GetHttpStatus("ok"), common.ErrError, "fail", "Error: invalid query key/value pair")
-				return
-			}
-			k, v := kv[0], kv[1]
-			query[k] = v
-		}
-	}
-
-	// pageNumber: 1 (default is 1)
-	if v := c.GetString("pageNumber"); v != "" {
-		pageNumber, _ = strconv.ParseInt(v, 10, 64)
-	}
-
-	// pageSize: 10 (default is 10)
-	if v := c.GetString("pageSize"); v != "" {
-		pageSize, _ = strconv.ParseInt(v, 10, 64)
-	}
-
-	// start position of result set
-	offset := (pageNumber - 1) * pageSize
-	l, err := models.GetAllAdmin(query, fields, sortby, order, offset, pageSize)
-	if err != nil {
-		c.ServerError(err)
-		return
-	}
-
-	var pageList []interface{}
-	for _, v := range l {
-		pageList = append(pageList, v)
-	}
-
-	/**
-	 * 查询 Admin Count
-	 */
-	cnt, err := models.GetAdminCount()
-	if err != nil {
-		c.ServerError(err)
-		return
-	}
-
-	if pages, err := helpers.NewPagination(pageList, int(cnt), int(pageSize), int(pageNumber), 5); err == nil {
-		c.JsonResult(common.GetHttpStatus("ok"), common.ErrOK, "success", *pages)
-	}
-}
-
 // UpdateAdmin ...
 // @Title Update Admin
 // @Description update Admin by some info
-// @Param id         body string  true  "Admin Id"
+// @Param id         path string  true	"The id you want to update"
 // @Param password1  body string  true  "Should update Admin password1"
 // @Param password2  body string  true  "Should update Admin password2"
 // @Param email      body string  true  "Admin email"
@@ -246,20 +166,16 @@ func (c *AdminController) GetAdmins() {
 // @Param nickname   boyd string  false "Admin Nickname"
 // @Success 200 nil
 // @Failure 500
-// @router /update [post]
+// @router /update/:id [put]
 func (c *AdminController) UpdateAdmin() {
-	var id int64
 	var password1 string
 	var password2 string
 	var email string
 	var roleName string
 	var isEnabled int
 
-	// id
-	if v, err := c.GetInt64("id"); v > -1 && err == nil {
-		id = v
-	}
-
+	idStr := c.Ctx.Input.Param(":id")
+	id, _ := strconv.ParseInt(idStr, 10, 64)
 	currentAdmin, err := models.GetAdminById(id)
 	if err != nil {
 		c.ServerError(err)
@@ -330,4 +246,83 @@ func (c *AdminController) UpdateAdmin() {
 		return
 	}
 	c.JsonResult(common.GetHttpStatus("ok"), common.ErrOK, "success", nil)
+}
+
+// GetAdmins ...
+// @Title Get Admin List
+// @Description Get Admin list by some info
+// @Param	query	    query	string	false	"Filter. e.g. col1:v1,col2:v2 ..."
+// @Param	fields	    query	string	false	"Fields returned. e.g. col1,col2 ..."
+// @Param	order	    query	string	false	"Order corresponding to each sortby field, if single value, apply to all sortby fields. e.g. desc,asc ...
+// @Param	sortby	    query	string	false	"Sorted-by fields. e.g. col1,col2 ..."
+// @Param	pageNumber	query	string	false	"Start position of result set. Must be an integer"
+// @Param	pageSize	query	int	    false	"Limit the size of result set. Must be an integer"
+// @router /all [get]
+// @Success 200 {object} models.Admin
+// @Failure 500
+func (c *AdminController) GetAdmins() {
+	var fields []string
+	var sortby []string
+	var order []string
+	var query = make(map[string]string)
+	var pageSize int64 = 10
+	var pageNumber int64
+
+	// fields: col1,col2,entity.col3
+	if v := c.GetString("fields"); v != "" {
+		fields = strings.Split(v, ",")
+	}
+	// sortby: col1,col2
+	if v := c.GetString("sortby"); v != "" {
+		sortby = strings.Split(v, ",")
+	}
+	// order: desc,asc
+	if v := c.GetString("order"); v != "" {
+		order = strings.Split(v, ",")
+	}
+	// query: k:v,k:v
+	if v := c.GetString("query"); v != "" {
+		for _, cond := range strings.Split(v, ",") {
+			kv := strings.SplitN(cond, ":", 2)
+			if len(kv) != 2 {
+				c.JsonResult(common.GetHttpStatus("ok"), common.ErrError, "fail", "Error: invalid query key/value pair")
+				return
+			}
+			k, v := kv[0], kv[1]
+			query[k] = v
+		}
+	}
+	// pageNumber: 1 (default is 1)
+	if v := c.GetString("pageNumber"); v != "" {
+		pageNumber, _ = strconv.ParseInt(v, 10, 64)
+	}
+	// pageSize: 10 (default is 10)
+	if v := c.GetString("pageSize"); v != "" {
+		pageSize, _ = strconv.ParseInt(v, 10, 64)
+	}
+	// start position of result set
+	offset := (pageNumber - 1) * pageSize
+	l, err := models.GetAllAdmin(query, fields, sortby, order, offset, pageSize)
+	if err != nil {
+		c.ServerError(err)
+		return
+	}
+
+	var pageList []interface{}
+	for _, v := range l {
+		pageList = append(pageList, v)
+	}
+
+	/**
+	 * 查询 Admin Count
+	 */
+	cnt, err := models.GetAdminCount()
+	if err != nil {
+		c.ServerError(err)
+		return
+	}
+
+	if pages, err := helpers.NewPagination(pageList, int(cnt), int(pageSize), int(pageNumber)); err == nil {
+		c.JsonResult(common.GetHttpStatus("ok"), common.ErrOK, "success", *pages)
+	}
 }

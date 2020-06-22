@@ -44,10 +44,10 @@ type Product struct {
 	Sales             int64            `orm:"column(sales)" description:"销量"`
 	WeekSales         int64            `orm:"column(week_sales)" description:"周销量"`
 	MonthSales        int64            `orm:"column(month_sales)" description:"月销量"`
-	WeekHitsDate      time.Time        `orm:"column(week_hits_date);type(datetime)" description:"周点击数更新日期"`
-	MonthHitsDate     time.Time        `orm:"column(month_hits_date);type(datetime)" description:"月点击数更新日期"`
-	WeekSalesDate     time.Time        `orm:"column(week_sales_date);type(datetime)" description:"周销量更新日期"`
-	MonthSalesDate    time.Time        `orm:"column(month_sales_date);type(datetime)" description:"月销量更新日期"`
+	WeekHitsDate      time.Time        `orm:"column(week_hits_date);auto_now_add;type(datetime)" description:"周点击数更新日期"`
+	MonthHitsDate     time.Time        `orm:"column(month_hits_date);auto_now_add;type(datetime)" description:"月点击数更新日期"`
+	WeekSalesDate     time.Time        `orm:"column(week_sales_date);auto_now_add;type(datetime)" description:"周销量更新日期"`
+	MonthSalesDate    time.Time        `orm:"column(month_sales_date);auto_now_add;type(datetime)" description:"月销量更新日期"`
 	AttributeValue0   string           `orm:"column(attribute_value0);size(255);null" description:"商品属性值0"`
 	AttributeValue1   string           `orm:"column(attribute_value1);size(255);null" description:"商品属性值1"`
 	AttributeValue2   string           `orm:"column(attribute_value2);size(255);null" description:"商品属性值2"`
@@ -103,6 +103,16 @@ func GetProductById(id int) (v *Product, err error) {
 		return v, nil
 	}
 	return nil, err
+}
+
+// GetProductCount calculate Product Count. Returns error if
+// Table doesn't exist
+func GetProductCount() (cnt int64, err error) {
+	o := orm.NewOrm()
+	if cnt, err := o.QueryTable(new(Product)).Count(); err == nil {
+		return cnt, nil
+	}
+	return 0, err
 }
 
 // GetAllProduct retrieves all Product matches certain condition. Returns empty list if

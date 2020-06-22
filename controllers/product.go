@@ -131,7 +131,7 @@ func (c *ProductController) GetAll() {
 // Put ...
 // @Title Put
 // @Description update the Product
-// @Param	id		path 	string	true		"The id you want to update"
+// @Param	id		    path 	string	        true		"The id you want to update"
 // @Param	body		body 	models.Product	true		"body for Product content"
 // @Success 200 {object} models.Product
 // @Failure 403 :id is not int

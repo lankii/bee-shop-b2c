@@ -131,7 +131,7 @@ func (c *AdminController) GetAll() {
 // Put ...
 // @Title Put
 // @Description update the Admin
-// @Param	id		path 	string	true		"The id you want to update"
+// @Param	id		   path 	string	true		"The id you want to update"
 // @Param	body		body 	models.Admin	true		"body for Admin content"
 // @Success 200 {object} models.Admin
 // @Failure 403 :id is not int

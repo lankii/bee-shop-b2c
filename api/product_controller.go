@@ -2,7 +2,9 @@ package api
 
 import (
 	"cleverbamboo.com/bee-shop-b2c/common"
+	"cleverbamboo.com/bee-shop-b2c/helpers"
 	"cleverbamboo.com/bee-shop-b2c/models"
+	"encoding/json"
 	"strconv"
 	"strings"
 )
@@ -13,18 +15,83 @@ type ProductController struct {
 
 // URLMapping ...
 func (c *ProductController) URLMapping() {
+	c.Mapping("AddProduct", c.AddProduct)
 	c.Mapping("GetProducts", c.GetProducts)
+	c.Mapping("UpdateProduct", c.UpdateProduct)
+}
+
+// AddProduct ...
+// @Title Add Product
+// @Description create Product
+// @Param	body	   body 	models.Product	true	"body for Product content"
+// @Success 201 {int}  models.Product.Id
+// @Failure 500
+// @router /add [post]
+func (c *ProductController) AddProduct() {
+	var v models.Product
+
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &v)
+	if err != nil {
+		c.ServerError(err)
+		return
+	}
+
+	id, err := models.AddProduct(&v)
+	if err != nil {
+		c.ServerError(err)
+		return
+	}
+	c.JsonResult(common.GetHttpStatus("created"),common.ErrOK, "success", id)
+}
+
+// UpdateProduct...
+// @Title Update Product
+// @Description Update Product by some fields
+// @Param   id			path    string          true    "The id you want to update"
+// @Param	body		body 	models.Product	true	"body for Product content"
+// @router /update/:id [put]
+// @Success 200 nil
+// @Fail    500
+func (c *ProductController) UpdateProduct() {
+	idStr := c.Ctx.Input.Param(":id")
+	id, _ := strconv.Atoi(idStr)
+
+	// GetProductById
+	currentProduct, err := models.GetProductById(id)
+	if err != nil {
+		c.ServerError(err)
+		return
+	}
+
+	// Unmarshal RequestBody
+	err = json.Unmarshal(c.Ctx.Input.RequestBody, &currentProduct)
+	if err != nil {
+		c.ServerError(err)
+		return
+	}
+
+	// UpdateProductById
+	err = models.UpdateProductById(currentProduct)
+	if err != nil {
+		c.ServerError(err)
+		return
+	}
+
+	c.JsonResult(common.GetHttpStatus("ok"), common.ErrOK, "success", nil)
 }
 
 // GetProducts ...
 // @Title Get All Product List
 // @Description Get Product list by some info
 // @Param	query	    query	string	false	"Filter. e.g. col1:v1,col2:v2 ..."
+// @Param	fields	    query	string	false	"Fields returned. e.g. col1,col2 ..."
 // @Param	sortby	    query	string	false	"Sorted-by fields. e.g. col1,col2 ..."
 // @Param	order	    query	string	false	"Order corresponding to each sortby field, if single value, apply to all sortby fields. e.g. desc,asc ...
 // @Param	pageNumber	query	string	false	"Start position of result set. Must be an integer"
 // @Param	pageSize	query	int	    false	"Limit the size of result set. Must be an integer"
 // @router /all [get]
+// @Success 200 {object} models.Product
+// @Failure 500
 func (c *ProductController) GetProducts() {
 	var fields []string
 	var sortby []string
@@ -57,12 +124,10 @@ func (c *ProductController) GetProducts() {
 			query[k] = v
 		}
 	}
-
 	// pageNumber: 1 (default is 1)
 	if v := c.GetString("pageNumber"); v != "" {
 		pageNumber, _ = strconv.ParseInt(v, 10, 64)
 	}
-
 	// pageSize: 10 (default is 10)
 	if v := c.GetString("pageSize"); v != "" {
 		pageSize, _ = strconv.ParseInt(v, 10, 64)
@@ -72,9 +137,25 @@ func (c *ProductController) GetProducts() {
 	offset := (pageNumber - 1) * pageSize
 	l, err := models.GetAllProduct(query, fields, sortby, order, offset, pageSize)
 	if err != nil {
-		c.Data["json"] = err.Error()
-	} else {
-		c.Data["json"] = l
+		c.ServerError(err)
+		return
 	}
-	c.ServeJSON()
+
+	var pageList []interface{}
+	for _, v := range l {
+		pageList = append(pageList, v)
+	}
+
+	/**
+	 * 查询 Product Count
+	 */
+	cnt, err := models.GetProductCount()
+	if err != nil {
+		c.ServerError(err)
+		return
+	}
+
+	if pages, err := helpers.NewPagination(pageList, int(cnt), int(pageSize), int(pageNumber)); err == nil {
+		c.JsonResult(common.GetHttpStatus("ok"), common.ErrOK, "success", *pages)
+	}
 }
