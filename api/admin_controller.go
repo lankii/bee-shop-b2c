@@ -159,16 +159,22 @@ func (c *AdminController) Register() {
 // @Param	query	    query	string	false	"Filter. e.g. col1:v1,col2:v2 ..."
 // @Param	sortby	    query	string	false	"Sorted-by fields. e.g. col1,col2 ..."
 // @Param	order	    query	string	false	"Order corresponding to each sortby field, if single value, apply to all sortby fields. e.g. desc,asc ...
+// @Param	sortby	query	string	false	"Sorted-by fields. e.g. col1,col2 ..."
 // @Param	pageNumber	query	string	false	"Start position of result set. Must be an integer"
 // @Param	pageSize	query	int	    false	"Limit the size of result set. Must be an integer"
 // @router /all [get]
 func (c *AdminController) GetAdmins() {
+	var fields []string
 	var sortby []string
 	var order []string
 	var query = make(map[string]string)
-	var pageSize int = 10
-	var pageNumber int
+	var pageSize int64 = 10
+	var pageNumber int64
 
+	// fields: col1,col2,entity.col3
+	if v := c.GetString("fields"); v != "" {
+		fields = strings.Split(v, ",")
+	}
 	// sortby: col1,col2
 	if v := c.GetString("sortby"); v != "" {
 		sortby = strings.Split(v, ",")
@@ -190,19 +196,19 @@ func (c *AdminController) GetAdmins() {
 		}
 	}
 
-	// pageNumber: integer
+	// pageNumber: 1 (default is 1)
 	if v := c.GetString("pageNumber"); v != "" {
-		pageNumber, _ = strconv.Atoi(v)
+		pageNumber, _ = strconv.ParseInt(v, 10, 64)
 	}
 
-	// pageSize: integer
+	// pageSize: 10 (default is 10)
 	if v := c.GetString("pageSize"); v != "" {
-		pageSize, _ = strconv.Atoi(v)
+		pageSize, _ = strconv.ParseInt(v, 10, 64)
 	}
 
 	// start position of result set
 	offset := (pageNumber - 1) * pageSize
-	l, err := models.GetAllAdmin(query, nil, sortby, order, int64(offset), int64(pageSize))
+	l, err := models.GetAllAdmin(query, fields, sortby, order, offset, pageSize)
 	if err != nil {
 		c.ServerError(err)
 		return
@@ -222,7 +228,7 @@ func (c *AdminController) GetAdmins() {
 		return
 	}
 
-	if pages, err := helpers.NewPagination(pageList, int(cnt), pageSize, pageNumber, 5); err == nil {
+	if pages, err := helpers.NewPagination(pageList, int(cnt), int(pageSize), int(pageNumber), 5); err == nil {
 		c.JsonResult(common.GetHttpStatus("ok"), common.ErrOK, "success", *pages)
 	}
 }

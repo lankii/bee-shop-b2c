@@ -72,9 +72,9 @@ type Product struct {
 	GoodsId           *Goods           `orm:"column(goods_id);rel(fk)" description:"货品"`
 	ProductCategoryId *ProductCategory `orm:"column(product_category_id);rel(fk)" description:"商品分类"`
 	CreateBy          string           `orm:"column(create_by);size(20);null" description:"创建人"`
-	CreationDate      time.Time        `orm:"column(creation_date);type(datetime);null" description:"创建日期"`
+	CreationDate      time.Time        `orm:"column(creation_date);auto_now_add;type(datetime);null" description:"创建日期"`
 	LastUpdatedBy     string           `orm:"column(last_updated_by);size(20);null" description:"最后修改人"`
-	LastUpdatedDate   time.Time        `orm:"column(last_updated_date);type(datetime);null" description:"最后修改日期"`
+	LastUpdatedDate   time.Time        `orm:"column(last_updated_date);auto_now;type(datetime);null" description:"最后修改日期"`
 	DeleteFlag        int8             `orm:"column(delete_flag)" description:"删除标记"`
 }
 

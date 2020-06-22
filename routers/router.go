@@ -243,6 +243,7 @@ func init() {
 		beego.NSNamespace("/product",
 			beego.NSInclude(
 				&controllers.ProductController{},
+				&api.ProductController{},
 			),
 		),
 
