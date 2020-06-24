@@ -107,9 +107,14 @@ func GetProductById(id int) (v *Product, err error) {
 
 // GetProductCount calculate Product Count. Returns error if
 // Table doesn't exist
-func GetProductCount() (cnt int64, err error) {
+func GetProductCount(query map[string]string) (cnt int64, err error) {
 	o := orm.NewOrm()
-	if cnt, err := o.QueryTable(new(Product)).Count(); err == nil {
+	qs := o.QueryTable(new(Product))
+	// query k=v
+	for k, v := range query {
+		qs = qs.Filter(k, v)
+	}
+	if cnt, err := qs.Count(); err == nil {
 		return cnt, nil
 	}
 	return 0, err

@@ -10,12 +10,14 @@ const (
  * 获取标准的 HTTP 状态码, -1 表示未找到
  */
 func GetHttpStatus(s string) int {
-	if s == "ok" {
+	switch s {
+	case "ok":
 		return ok
-	} else if s == "created" {
+	case "created":
 		return created
-	} else if s == "internalServerError" {
-		return internalServerError
+	case "internalServerError":
+		return 500
+	default:
+		return -1
 	}
-	return -1
 }

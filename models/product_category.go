@@ -19,11 +19,11 @@ type ProductCategory struct {
 	TreePath        string           `orm:"column(tree_path);size(255)" description:"树路径"`
 	Grade           int              `orm:"column(grade)" description:"层级"`
 	ParentId        *ProductCategory `orm:"column(parent_id);rel(fk)" description:"上级分类"`
-	Orders          int              `orm:"column(orders);null" description:"订单"`
+	Orders          int              `orm:"column(orders);null" description:"排序"`
 	CreateBy        string           `orm:"column(create_by);size(20);null" description:"创建人"`
-	CreationDate    time.Time        `orm:"column(creation_date);type(datetime);null" description:"创建日期"`
+	CreationDate    time.Time        `orm:"column(creation_date);auto_now_add;type(datetime);null" description:"创建日期"`
 	LastUpdatedBy   string           `orm:"column(last_updated_by);size(20);null" description:"最后修改人"`
-	LastUpdatedDate time.Time        `orm:"column(last_updated_date);type(datetime);null" description:"最后修改日期"`
+	LastUpdatedDate time.Time        `orm:"column(last_updated_date);auto_now;type(datetime);null" description:"最后修改日期"`
 	DeleteFlag      int8             `orm:"column(delete_flag)" description:"删除标记"`
 }
 
@@ -53,6 +53,22 @@ func GetProductCategoryById(id int) (v *ProductCategory, err error) {
 	}
 	return nil, err
 }
+
+// GetProductCategoryCount calculate ProductCategoryCount Count. Returns error if
+// Table doesn't exist
+func GetProductCategoryCount(query map[string]string) (cnt int64, err error) {
+	o := orm.NewOrm()
+	qs := o.QueryTable(new(Product))
+	// query k=v
+	for k, v := range query {
+		qs = qs.Filter(k, v)
+	}
+	if cnt, err := qs.Count(); err == nil {
+		return cnt, nil
+	}
+	return 0, err
+}
+
 
 // GetAllProductCategory retrieves all ProductCategory matches certain condition. Returns empty list if
 // no records exist

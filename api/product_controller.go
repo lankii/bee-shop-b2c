@@ -3,6 +3,7 @@ package api
 import (
 	"cleverbamboo.com/bee-shop-b2c/common"
 	"cleverbamboo.com/bee-shop-b2c/helpers"
+	"cleverbamboo.com/bee-shop-b2c/model_views"
 	"cleverbamboo.com/bee-shop-b2c/models"
 	"encoding/json"
 	"strconv"
@@ -16,7 +17,7 @@ type ProductController struct {
 // URLMapping ...
 func (c *ProductController) URLMapping() {
 	c.Mapping("AddProduct", c.AddProduct)
-	c.Mapping("GetProducts", c.GetProducts)
+	c.Mapping("GetAllProduct", c.GetAllProduct)
 	c.Mapping("UpdateProduct", c.UpdateProduct)
 }
 
@@ -41,10 +42,10 @@ func (c *ProductController) AddProduct() {
 		c.ServerError(err)
 		return
 	}
-	c.JsonResult(common.GetHttpStatus("created"),common.ErrOK, "success", id)
+	c.JsonResult(common.GetHttpStatus("created"), common.ErrOK, "success", id)
 }
 
-// UpdateProduct...
+// UpdateProduct ...
 // @Title Update Product
 // @Description Update Product by some fields
 // @Param   id			path    string          true    "The id you want to update"
@@ -80,11 +81,10 @@ func (c *ProductController) UpdateProduct() {
 	c.JsonResult(common.GetHttpStatus("ok"), common.ErrOK, "success", nil)
 }
 
-// GetProducts ...
+// GetAllProduct ...
 // @Title Get All Product List
 // @Description Get Product list by some info
 // @Param	query	    query	string	false	"Filter. e.g. col1:v1,col2:v2 ..."
-// @Param	fields	    query	string	false	"Fields returned. e.g. col1,col2 ..."
 // @Param	sortby	    query	string	false	"Sorted-by fields. e.g. col1,col2 ..."
 // @Param	order	    query	string	false	"Order corresponding to each sortby field, if single value, apply to all sortby fields. e.g. desc,asc ...
 // @Param	pageNumber	query	string	false	"Start position of result set. Must be an integer"
@@ -92,18 +92,13 @@ func (c *ProductController) UpdateProduct() {
 // @router /all [get]
 // @Success 200 {object} models.Product
 // @Failure 500
-func (c *ProductController) GetProducts() {
-	var fields []string
+func (c *ProductController) GetAllProduct() {
 	var sortby []string
 	var order []string
 	var query = make(map[string]string)
 	var pageSize int64 = 10
-	var pageNumber int64
+	var pageNumber int64 = 1
 
-	// fields: col1,col2,entity.col3
-	if v := c.GetString("fields"); v != "" {
-		fields = strings.Split(v, ",")
-	}
 	// sortby: col1,col2
 	if v := c.GetString("sortby"); v != "" {
 		sortby = strings.Split(v, ",")
@@ -132,30 +127,57 @@ func (c *ProductController) GetProducts() {
 	if v := c.GetString("pageSize"); v != "" {
 		pageSize, _ = strconv.ParseInt(v, 10, 64)
 	}
-
 	// start position of result set
 	offset := (pageNumber - 1) * pageSize
-	l, err := models.GetAllProduct(query, fields, sortby, order, offset, pageSize)
+	l, err := models.GetAllProduct(query, nil, sortby, order, offset, pageSize)
 	if err != nil {
 		c.ServerError(err)
 		return
 	}
 
+	/**
+	 * 分页并只返回前端需要的字段
+	 */
 	var pageList []interface{}
 	for _, v := range l {
-		pageList = append(pageList, v)
+		productView := model_views.ProductView{}
+		product := v.(models.Product)
+
+		// 根据 product_category_id 查询
+		product.ProductCategoryId, err = models.GetProductCategoryById(product.ProductCategoryId.Id)
+		if err != nil {
+			c.ServerError(err)
+			return
+		}
+
+		productView.Id = product.Id
+		productView.Sn = product.Sn
+		productView.Name = product.Name
+		productView.ProductCategoryId = product.ProductCategoryId.Id
+		productView.ProductCategoryName = product.ProductCategoryId.Name
+		productView.Price = product.Price
+		productView.Stock = product.Stock
+		productView.IsMarketable = product.IsMarketable
+		productView.IsList = product.IsList
+		productView.IsTop = product.IsTop
+		productView.CreationDate = product.CreationDate
+		pageList = append(pageList, productView)
 	}
 
 	/**
 	 * 查询 Product Count
 	 */
-	cnt, err := models.GetProductCount()
+	cnt, err := models.GetProductCount(query)
+	if err != nil {
+		c.ServerError(err)
+		return
+	}
+	pages, err := helpers.NewPagination(pageList, int(cnt), int(pageSize), int(pageNumber))
+
 	if err != nil {
 		c.ServerError(err)
 		return
 	}
 
-	if pages, err := helpers.NewPagination(pageList, int(cnt), int(pageSize), int(pageNumber)); err == nil {
-		c.JsonResult(common.GetHttpStatus("ok"), common.ErrOK, "success", *pages)
-	}
+	c.JsonResult(common.GetHttpStatus("ok"), common.ErrOK, "success", *pages)
 }

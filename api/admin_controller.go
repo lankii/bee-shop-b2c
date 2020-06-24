@@ -18,7 +18,7 @@ type AdminController struct {
 func (c *AdminController) URLMapping() {
 	c.Mapping("Login", c.Login)
 	c.Mapping("Register", c.Register)
-	c.Mapping("GetAllAdmins", c.GetAdmins)
+	c.Mapping("GetAllAdmins", c.GetAllAdmins)
 	c.Mapping("UpdateAdmin", c.UpdateAdmin)
 }
 
@@ -249,8 +249,8 @@ func (c *AdminController) UpdateAdmin() {
 }
 
 // GetAdmins ...
-// @Title Get Admin List
-// @Description Get Admin list by some info
+// @Title Get All Admin List
+// @Description Get All Admin List
 // @Param	query	    query	string	false	"Filter. e.g. col1:v1,col2:v2 ..."
 // @Param	fields	    query	string	false	"Fields returned. e.g. col1,col2 ..."
 // @Param	order	    query	string	false	"Order corresponding to each sortby field, if single value, apply to all sortby fields. e.g. desc,asc ...
@@ -260,13 +260,13 @@ func (c *AdminController) UpdateAdmin() {
 // @router /all [get]
 // @Success 200 {object} models.Admin
 // @Failure 500
-func (c *AdminController) GetAdmins() {
+func (c *AdminController) GetAllAdmins() {
 	var fields []string
 	var sortby []string
 	var order []string
 	var query = make(map[string]string)
 	var pageSize int64 = 10
-	var pageNumber int64
+	var pageNumber int64 = 1
 
 	// fields: col1,col2,entity.col3
 	if v := c.GetString("fields"); v != "" {
@@ -322,7 +322,11 @@ func (c *AdminController) GetAdmins() {
 		return
 	}
 
-	if pages, err := helpers.NewPagination(pageList, int(cnt), int(pageSize), int(pageNumber)); err == nil {
-		c.JsonResult(common.GetHttpStatus("ok"), common.ErrOK, "success", *pages)
+	pages, err := helpers.NewPagination(pageList, int(cnt), int(pageSize), int(pageNumber))
+	if err != nil {
+		c.ServerError(err)
+		return
 	}
+
+	c.JsonResult(common.GetHttpStatus("ok"), common.ErrOK, "success", *pages)
 }
