@@ -18,8 +18,7 @@ func (c *ProductCategoryController) URLMapping() {
 	c.Mapping("AddProductCategory", c.AddProductCategory)
 }
 
-// AddProductCategory ...
-// @Title Add Product Category
+// @Title AddProductCategory
 // @Description create ProductCategory
 // @Param name      body string  true   "Category name"
 // @Param parent_id body int     false  "Category parent is id"
@@ -123,13 +122,17 @@ func (c *ProductCategoryController) AddProductCategory() {
 	c.JsonResult(common.GetHttpStatus("created"), common.ErrOK, common.Success, nil)
 }
 
+// @Title UpdateProductCategory
+// @Description Update product's category
+// @Success 200
+// @Failure 500
+// @router /update [put]
 func (c *ProductCategoryController) UpdateProductCategory() {
 
 }
 
-// GetProductCategoryAll ...
-// @Title Get All Product Category List
-// @Description Get All Product Category List
+// @Title GetProductCategoryAll
+// @Description Get all product category by some filed
 // @router /all [get]
 // @Success 200 {object} model_view.ProductCategory
 // @Failure 500

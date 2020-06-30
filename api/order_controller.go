@@ -56,9 +56,8 @@ func (c *OrderController) UpdateOrder() {
 	c.JsonResult(common.GetHttpStatus("ok"), common.ErrOK, common.Success, nil)
 }
 
-// GetAllOrder ...
-// @Title Get All Order List
-// @Description Get All Order List
+// @Title GetAllOrder
+// @Description Get all order's list by some filed
 // @Param	query	    query	string	false	"Filter. e.g. col1:v1,col2:v2 ..."
 // @Param	sortby	    query	string	false	"Sorted-by fields. e.g. col1,col2 ..."
 // @Param	order	    query	string	false	"Order corresponding to each sortby field, if single value, apply to all sortby fields. e.g. desc,asc ...

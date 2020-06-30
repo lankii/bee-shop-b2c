@@ -45,9 +45,8 @@ func (c *ProductController) AddProduct() {
 	c.JsonResult(common.GetHttpStatus("created"), common.ErrOK, "success", id)
 }
 
-// UpdateProduct ...
-// @Title Update Product
-// @Description Update Product by some fields
+// @Title UpdateProduct
+// @Description Update product by some field
 // @Param   id			path    string          true    "The id you want to update"
 // @Param	body		body 	models.Product	true	"body for Product content"
 // @router /update/:id [put]
@@ -81,9 +80,8 @@ func (c *ProductController) UpdateProduct() {
 	c.JsonResult(common.GetHttpStatus("ok"), common.ErrOK, "success", nil)
 }
 
-// GetAllProduct ...
-// @Title Get All Product List
-// @Description Get Product list by some info
+// @Title GetAllProduct
+// @Description Get all product list by some filed
 // @Param	query	    query	string	false	"Filter. e.g. col1:v1,col2:v2 ..."
 // @Param	sortby	    query	string	false	"Sorted-by fields. e.g. col1,col2 ..."
 // @Param	order	    query	string	false	"Order corresponding to each sortby field, if single value, apply to all sortby fields. e.g. desc,asc ...
