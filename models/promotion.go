@@ -60,6 +60,21 @@ func GetPromotionById(id int) (v *Promotion, err error) {
 	return nil, err
 }
 
+// GetPromotionCount calculate Promotion count. Returns error if
+// Table doesn't exist
+func GetPromotionCount(query map[string]string) (cnt int64, err error) {
+	o := orm.NewOrm()
+	qs := o.QueryTable(new(Promotion))
+	// query k=v
+	for k, v := range query {
+		qs = qs.Filter(k, v)
+	}
+	if cnt, err := qs.Count(); err == nil {
+		return cnt, nil
+	}
+	return 0, err
+}
+
 // GetAllPromotion retrieves all Promotion matches certain condition. Returns empty list if
 // no records exist
 func GetAllPromotion(query map[string]string, fields []string, sortby []string, order []string,

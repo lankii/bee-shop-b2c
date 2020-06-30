@@ -53,7 +53,7 @@ func (c *OrderController) UpdateOrder() {
 		return
 	}
 
-	c.JsonResult(common.GetHttpStatus("ok"), common.ErrOK, "success", nil)
+	c.JsonResult(common.GetHttpStatus("ok"), common.ErrOK, common.Success, nil)
 }
 
 // GetAllOrder ...
@@ -64,7 +64,7 @@ func (c *OrderController) UpdateOrder() {
 // @Param	order	    query	string	false	"Order corresponding to each sortby field, if single value, apply to all sortby fields. e.g. desc,asc ...
 // @Param	pageNumber	query	string	false	"Start position of result set. Must be an integer"
 // @Param	pageSize	query	int	    false	"Limit the size of result set. Must be an integer"
-// @Success 200 {object} models.Order
+// @Success 200 {object} model_views.Order
 // @Failure 500
 // @router /all [get]
 func (c *OrderController) GetAllOrder() {
@@ -115,7 +115,7 @@ func (c *OrderController) GetAllOrder() {
 	 */
 	var pageList []interface{}
 	for _, v := range l {
-		orderView := model_views.OrderView{}
+		orderView := model_views.Order{}
 		currentMember := &models.Member{}
 		order := v.(models.Order)
 
@@ -154,5 +154,5 @@ func (c *OrderController) GetAllOrder() {
 		return
 	}
 
-	c.JsonResult(common.GetHttpStatus("ok"), common.ErrOK, "success", *pages)
+	c.JsonResult(common.GetHttpStatus("ok"), common.ErrOK, common.Success, *pages)
 }

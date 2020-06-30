@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-type OrderView struct {
+type Order struct {
 	Id                 int       `json:"id" description:"订单ID"`
 	Sn                 string    `json:"sn" description:"订单编号"`
 	Amount             float64   `json:"amount" description:"订单金额"`

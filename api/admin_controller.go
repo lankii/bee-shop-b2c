@@ -102,28 +102,28 @@ func (c *AdminController) Register() {
 	}
 
 	if password1 != password2 {
-		c.JsonResult(common.GetHttpStatus("ok"), common.ErrOK, "登录密码与确认密码不一致")
+		c.JsonResult(common.GetHttpStatus("ok"), common.ErrOK, common.Fail, "登录密码与确认密码不一致")
 		return
 	}
 
 	if l := strings.Count(password1, ""); password1 == "" || l > 20 || l < 6 {
-		c.JsonResult(common.GetHttpStatus("ok"), common.ErrOK, "密码必须在6-20个字符之间")
+		c.JsonResult(common.GetHttpStatus("ok"), common.ErrOK, common.Fail, "密码必须在6-20个字符之间")
 		return
 	}
 
 	if ok, err := regexp.MatchString(common.RegexpEmail, email); !ok || err != nil || email == "" {
-		c.JsonResult(common.GetHttpStatus("ok"), common.ErrOK, "邮箱格式错误")
+		c.JsonResult(common.GetHttpStatus("ok"), common.ErrOK, common.Fail, "邮箱格式错误")
 		return
 	}
 
 	if l := strings.Count(nickname, "") - 1; l < 2 || l > 20 {
-		c.JsonResult(common.GetHttpStatus("ok"), common.ErrOK, "用户昵称限制在2-20个字符")
+		c.JsonResult(common.GetHttpStatus("ok"), common.ErrOK, common.Fail, "用户昵称限制在2-20个字符")
 		return
 	}
 
 	currentAdmin, _ := models.GetAdminByUsername(username)
 	if currentAdmin != nil {
-		c.JsonResult(common.GetHttpStatus("ok"), common.ErrError, "该用户已注册", nil)
+		c.JsonResult(common.GetHttpStatus("ok"), common.ErrError, common.Fail, "该用户已注册")
 		return
 	}
 	currentAdmin = &models.Admin{}
@@ -147,7 +147,7 @@ func (c *AdminController) Register() {
 	}
 
 	if err = models.AddAdminRole(id, common.RUser); err == nil {
-		c.JsonResult(common.GetHttpStatus("created"), common.ErrOK, "success", nil)
+		c.JsonResult(common.GetHttpStatus("created"), common.ErrOK, common.Success, nil)
 	} else {
 		c.ServerError(err)
 	}
@@ -245,7 +245,7 @@ func (c *AdminController) UpdateAdmin() {
 		c.ServerError(err)
 		return
 	}
-	c.JsonResult(common.GetHttpStatus("ok"), common.ErrOK, "success", nil)
+	c.JsonResult(common.GetHttpStatus("ok"), common.ErrOK, common.Success, nil)
 }
 
 // GetAdmins ...
@@ -328,5 +328,5 @@ func (c *AdminController) GetAllAdmins() {
 		return
 	}
 
-	c.JsonResult(common.GetHttpStatus("ok"), common.ErrOK, "success", *pages)
+	c.JsonResult(common.GetHttpStatus("ok"), common.ErrOK, common.Success, *pages)
 }

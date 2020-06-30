@@ -264,6 +264,7 @@ func init() {
 		beego.NSNamespace("/promotion",
 			beego.NSInclude(
 				&controllers.PromotionController{},
+				&api.PromotionController{},
 			),
 		),
 

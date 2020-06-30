@@ -24,7 +24,7 @@ func (c *ProductController) URLMapping() {
 // AddProduct ...
 // @Title Add Product
 // @Description create Product
-// @Param	body	   body 	models.Product	true	"body for Product content"
+// @Param	name	   body 	models.Product	true	"body for Product content"
 // @Success 201 {int}  models.Product.Id
 // @Failure 500
 // @router /add [post]
@@ -90,7 +90,7 @@ func (c *ProductController) UpdateProduct() {
 // @Param	pageNumber	query	string	false	"Start position of result set. Must be an integer"
 // @Param	pageSize	query	int	    false	"Limit the size of result set. Must be an integer"
 // @router /all [get]
-// @Success 200 {object} models.Product
+// @Success 200 {object} model_views.Product
 // @Failure 500
 func (c *ProductController) GetAllProduct() {
 	var sortby []string
@@ -140,7 +140,7 @@ func (c *ProductController) GetAllProduct() {
 	 */
 	var pageList []interface{}
 	for _, v := range l {
-		productView := model_views.ProductView{}
+		productView := model_views.Product{}
 		product := v.(models.Product)
 
 		// 根据 product_category_id 查询
@@ -179,5 +179,5 @@ func (c *ProductController) GetAllProduct() {
 		return
 	}
 
-	c.JsonResult(common.GetHttpStatus("ok"), common.ErrOK, "success", *pages)
+	c.JsonResult(common.GetHttpStatus("ok"), common.ErrOK, common.Success, *pages)
 }

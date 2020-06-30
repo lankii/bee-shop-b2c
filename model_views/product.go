@@ -2,7 +2,7 @@ package model_views
 
 import "time"
 
-type ProductView struct {
+type Product struct {
 	Id                  int       `json:"id" description:"主键ID"`
 	Sn                  string    `json:"sn" description:"编号"`
 	Name                string    `json:"name" description:"名称"`
