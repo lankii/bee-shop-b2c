@@ -18,7 +18,6 @@ type ProductCategoryController struct {
 // URLMapping ...
 func (c *ProductCategoryController) URLMapping() {
 	c.Mapping("Post", c.Post)
-	c.Mapping("GetOne", c.GetOne)
 	c.Mapping("GetAll", c.GetAll)
 	c.Mapping("Put", c.Put)
 	c.Mapping("Delete", c.Delete)
@@ -42,25 +41,6 @@ func (c *ProductCategoryController) Post() {
 		}
 	} else {
 		c.Data["json"] = err.Error()
-	}
-	c.ServeJSON()
-}
-
-// GetOne ...
-// @Title Get One
-// @Description get ProductCategory by id
-// @Param	id		path 	string	true		"The key for staticblock"
-// @Success 200 {object} models.ProductCategory
-// @Failure 403 :id is empty
-// @router /:id [get]
-func (c *ProductCategoryController) GetOne() {
-	idStr := c.Ctx.Input.Param(":id")
-	id, _ := strconv.Atoi(idStr)
-	v, err := models.GetProductCategoryById(id)
-	if err != nil {
-		c.Data["json"] = err.Error()
-	} else {
-		c.Data["json"] = v
 	}
 	c.ServeJSON()
 }

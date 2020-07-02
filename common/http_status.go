@@ -3,6 +3,8 @@ package common
 const (
 	ok                  = 200
 	created             = 201
+	noContent           = 204
+	forbidden           = 403
 	internalServerError = 500
 )
 
@@ -15,8 +17,12 @@ func GetHttpStatus(s string) int {
 		return ok
 	case "created":
 		return created
+	case "noContent":
+		return noContent
+	case "forbidden":
+		return forbidden
 	case "internalServerError":
-		return 500
+		return internalServerError
 	default:
 		return -1
 	}
