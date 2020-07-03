@@ -6,7 +6,6 @@ import (
 	"cleverbamboo.com/bee-shop-b2c/model_views"
 	"cleverbamboo.com/bee-shop-b2c/models"
 	"encoding/json"
-	"github.com/astaxie/beego/logs"
 	"strconv"
 	"strings"
 )
@@ -25,115 +24,60 @@ func (c *ProductController) URLMapping() {
 // AddProduct ...
 // @Title Add Product
 // @Description create Product
-// @Success 201
+// @Param	name	   body 	models.Product	true	"body for Product content"
+// @Success 201 {int}  models.Product.Id
 // @Failure 500
 // @router /add [post]
 func (c *ProductController) AddProduct() {
-	var productCategoryId int
-	var productType int
-	var name string
-	var caption string
-	var price float64
-	var cost float64
-	var marketPrice float64
-	var image string
-	var unit string
-	var point int64
-	var brand int
-	var keyword string
+	var v models.Product
 
-	// productCategoryId
-	if v := c.GetString("productCategoryId"); v != "" {
-		productCategoryId, _ = strconv.Atoi(v)
-		logs.Info("productCategoryId:", productCategoryId)
-	}
-	// productType
-	if v := c.GetString("productType"); v != "" {
-		productType, _ = strconv.Atoi(v)
-		logs.Info("productType:", productType)
-	}
-	// name
-	if v := c.GetString("caption"); v != "" {
-		caption = v
-		logs.Info("caption:", caption)
-	}
-	// name
-	if v := c.GetString("name"); v != "" {
-		name = v
-		logs.Info("name:", name)
-	}
-	// price
-	if v := c.GetString("price"); v != "" {
-		price, _ = strconv.ParseFloat(v, 64)
-		logs.Info("price:", price)
-	}
-	// cost
-	if v := c.GetString("cost"); v != "" {
-		cost, _ = strconv.ParseFloat(v, 64)
-		logs.Info("cost:", cost)
-	}
-	// cost
-	if v := c.GetString("marketPrice"); v != "" {
-		marketPrice, _ = strconv.ParseFloat(v, 64)
-		logs.Info("cost:", marketPrice)
-	}
-	// image
-	if v := c.GetString("image"); v != "" {
-		image = v
-		logs.Info("image:", image)
-	}
-	// unit
-	if v := c.GetString("unit"); v != "" {
-		unit = v
-		logs.Info("unit:", unit)
-	}
-	// point
-	if v := c.GetString("point"); v != "" {
-		point, _ = strconv.ParseInt(v, 10, 64)
-		logs.Info("unit:", point)
-	}
-	// brand
-	if v := c.GetString("brand"); v != "" {
-		brand, _ = strconv.Atoi(v)
-		logs.Info("unit:", brand)
-	}
-	// keyword
-	if v := c.GetString("keyword"); v != "" {
-		keyword = v
-		logs.Info("keyword:", keyword)
-	}
-	var product models.Product
-
-	/**
-	 * 雪花算法
-	 */
-	node, err := helpers.NewWorker(int64(productCategoryId))
+	err := json.Unmarshal(c.Ctx.Input.RequestBody, &v)
 	if err != nil {
 		c.ServerError(err)
 		return
 	}
 
-	product.Sn = strconv.FormatInt(node.GetId(), 10)
-	product.ProductCategoryId = &models.ProductCategory{Id: productCategoryId}
-	product.Type = productType
-	product.Name = name
-	product.Caption = caption
-	product.Price = price
-	product.Cost = cost
-	product.MarketPrice = marketPrice
-	product.Image = image
-	product.Unit = unit
-	product.Point = point
-	// TODO tag
-	product.BrandId = &models.Brand{Id: brand}
-	product.Keyword = keyword
-
-	_, err = models.AddProduct(&product)
+	id, err := models.AddProduct(&v)
 	if err != nil {
 		c.ServerError(err)
 		return
 	}
-	c.JsonResult(common.GetHttpStatus("created"), common.ErrOK, common.Success, nil)
+	c.JsonResult(common.GetHttpStatus("created"), common.ErrOK, "success", id)
+}
+
+// @Title UpdateProduct
+// @Description Update product by some field
+// @Param   id			path    string          true    "The id you want to update"
+// @Param	body		body 	models.Product	true	"body for Product content"
+// @router /update/:id [put]
+// @Success 200 nil
+// @Fail    500
+func (c *ProductController) UpdateProduct() {
+	idStr := c.Ctx.Input.Param(":id")
+	id, _ := strconv.Atoi(idStr)
+
+	// GetProductById
+	currentProduct, err := models.GetProductById(id)
+	if err != nil {
+		c.ServerError(err)
+		return
+	}
+
+	// Unmarshal RequestBody
+	err = json.Unmarshal(c.Ctx.Input.RequestBody, &currentProduct)
+	if err != nil {
+		c.ServerError(err)
+		return
+	}
+
+	// UpdateProductById
+	err = models.UpdateProductById(currentProduct)
+	if err != nil {
+		c.ServerError(err)
+		return
+	}
+
+	c.JsonResult(common.GetHttpStatus("ok"), common.ErrOK, "success", nil)
 }
 
 // @Title GetAllProduct
@@ -234,39 +178,4 @@ func (c *ProductController) GetAllProduct() {
 	}
 
 	c.JsonResult(common.GetHttpStatus("ok"), common.ErrOK, common.Success, *pages)
-}
-
-// @Title UpdateProduct
-// @Description Update product by some field
-// @Param   id			path    string          true    "The id you want to update"
-// @Param	body		body 	models.Product	true	"body for Product content"
-// @router  /update/:id [put]
-// @Success 200 nil
-// @Fail    500
-func (c *ProductController) UpdateProduct() {
-	idStr := c.Ctx.Input.Param(":id")
-	id, _ := strconv.Atoi(idStr)
-
-	// GetProductById
-	currentProduct, err := models.GetProductById(id)
-	if err != nil {
-		c.ServerError(err)
-		return
-	}
-
-	// Unmarshal RequestBody
-	err = json.Unmarshal(c.Ctx.Input.RequestBody, &currentProduct)
-	if err != nil {
-		c.ServerError(err)
-		return
-	}
-
-	// UpdateProductById
-	err = models.UpdateProductById(currentProduct)
-	if err != nil {
-		c.ServerError(err)
-		return
-	}
-
-	c.JsonResult(common.GetHttpStatus("ok"), common.ErrOK, "success", nil)
 }

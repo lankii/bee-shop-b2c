@@ -18,9 +18,9 @@ type Tag struct {
 	Orders          int       `orm:"column(orders);null" description:"排序"`
 	Memo            string    `orm:"column(memo);size(255);null" description:"备注"`
 	CreateBy        string    `orm:"column(create_by);size(20);null" description:"创建人"`
-	CreationDate    time.Time `orm:"column(creation_date);auto_now_add;type(datetime);null" description:"创建日期"`
+	CreationDate    time.Time `orm:"column(creation_date);type(datetime);null" description:"创建日期"`
 	LastUpdatedBy   string    `orm:"column(last_updated_by);size(20);null" description:"最后修改人"`
-	LastUpdatedDate time.Time `orm:"column(last_updated_date);auto_now;type(datetime);null" description:"最后修改日期"`
+	LastUpdatedDate time.Time `orm:"column(last_updated_date);type(datetime);null" description:"最后修改日期"`
 	DeleteFlag      int8      `orm:"column(delete_flag)" description:"删除标记"`
 }
 
@@ -50,22 +50,6 @@ func GetTagById(id int) (v *Tag, err error) {
 	}
 	return nil, err
 }
-
-// GetTagtCount calculate Tag Count. Returns error if
-// Table doesn't exist
-func GetTagtCount(query map[string]string) (cnt int64, err error) {
-	o := orm.NewOrm()
-	qs := o.QueryTable(new(Tag))
-	// query k=v
-	for k, v := range query {
-		qs = qs.Filter(k, v)
-	}
-	if cnt, err := qs.Count(); err == nil {
-		return cnt, nil
-	}
-	return 0, err
-}
-
 
 // GetAllTag retrieves all Tag matches certain condition. Returns empty list if
 // no records exist

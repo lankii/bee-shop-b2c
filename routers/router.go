@@ -63,7 +63,6 @@ func init() {
 		beego.NSNamespace("/brand",
 			beego.NSInclude(
 				&controllers.BrandController{},
-				&api.BrandController{},
 			),
 		),
 
@@ -356,7 +355,6 @@ func init() {
 		beego.NSNamespace("/tag",
 			beego.NSInclude(
 				&controllers.TagController{},
-				&api.TagController{},
 			),
 		),
 	)

@@ -17,11 +17,11 @@ type Brand struct {
 	Introduction    string    `orm:"column(introduction);null" description:"介绍"`
 	Url             string    `orm:"column(url);size(255);null" description:"网址"`
 	Logo            string    `orm:"column(logo);size(255);null" description:"logo"`
-	Orders          int       `orm:"column(orders);null" description:"排序"`
+	Orders          int       `orm:"column(orders);null" description:"订单"`
 	CreateBy        string    `orm:"column(create_by);size(20);null" description:"创建人"`
-	CreationDate    time.Time `orm:"column(creation_date);auto_now_add;type(datetime);null" description:"创建日期"`
+	CreationDate    time.Time `orm:"column(creation_date);type(datetime);null" description:"创建日期"`
 	LastUpdatedBy   string    `orm:"column(last_updated_by);size(20);null" description:"最后修改人"`
-	LastUpdatedDate time.Time `orm:"column(last_updated_date);auto_now;type(datetime);null" description:"最后修改日期"`
+	LastUpdatedDate time.Time `orm:"column(last_updated_date);type(datetime);null" description:"最后修改日期"`
 	DeleteFlag      int8      `orm:"column(delete_flag)" description:"删除标记"`
 }
 
@@ -50,21 +50,6 @@ func GetBrandById(id int) (v *Brand, err error) {
 		return v, nil
 	}
 	return nil, err
-}
-
-// GetProductCount calculate Brand Count. Returns error if
-// Table doesn't exist
-func GetBrandtCount(query map[string]string) (cnt int64, err error) {
-	o := orm.NewOrm()
-	qs := o.QueryTable(new(Brand))
-	// query k=v
-	for k, v := range query {
-		qs = qs.Filter(k, v)
-	}
-	if cnt, err := qs.Count(); err == nil {
-		return cnt, nil
-	}
-	return 0, err
 }
 
 // GetAllBrand retrieves all Brand matches certain condition. Returns empty list if

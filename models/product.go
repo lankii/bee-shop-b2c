@@ -18,11 +18,9 @@ type Product struct {
 	Price             float64          `orm:"column(price);digits(21);decimals(6)" description:"销售价"`
 	Cost              float64          `orm:"column(cost);null;digits(21);decimals(6)" description:"成本价"`
 	MarketPrice       float64          `orm:"column(market_price);digits(21);decimals(6)" description:"市场价"`
-	Caption           string           `orm:"column(caption);size(255)" description:"副标题"`
 	Image             string           `orm:"column(image);size(255);null" description:"展示图片"`
 	Unit              string           `orm:"column(unit);size(255);null" description:"单位"`
 	Weight            int              `orm:"column(weight);null" description:"重量"`
-	Type              int              `orm:"column(type);null" description:"类型"`
 	Stock             int              `orm:"column(stock);null" description:"库存"`
 	AllocatedStock    int              `orm:"column(allocated_stock)" description:"已分配库存"`
 	StockMemo         string           `orm:"column(stock_memo);size(255);null" description:"库存备注"`
@@ -71,6 +69,7 @@ type Product struct {
 	AttributeValue18  string           `orm:"column(attribute_value18);size(255);null" description:"商品属性值18"`
 	AttributeValue19  string           `orm:"column(attribute_value19);size(255);null" description:"商品属性19"`
 	BrandId           *Brand           `orm:"column(brand_id);rel(fk)" description:"品牌"`
+	GoodsId           *Goods           `orm:"column(goods_id);rel(fk)" description:"货品"`
 	ProductCategoryId *ProductCategory `orm:"column(product_category_id);rel(fk)" description:"商品分类"`
 	CreateBy          string           `orm:"column(create_by);size(20);null" description:"创建人"`
 	CreationDate      time.Time        `orm:"column(creation_date);auto_now_add;type(datetime);null" description:"创建日期"`
