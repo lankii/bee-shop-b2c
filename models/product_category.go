@@ -72,7 +72,7 @@ func GetProductCategoryByName(name string) (v *ProductCategory, err error) {
 // Table doesn't exist
 func GetProductCategoryCount(query map[string]string) (cnt int64, err error) {
 	o := orm.NewOrm()
-	qs := o.QueryTable(new(Product))
+	qs := o.QueryTable(new(ProductCategory))
 	// query k=v
 	for k, v := range query {
 		qs = qs.Filter(k, v)
