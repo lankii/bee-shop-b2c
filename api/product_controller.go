@@ -197,13 +197,6 @@ func (c *ProductController) GetAllProduct() {
 		productView := model_views.Product{}
 		product := v.(models.Product)
 
-		// 根据 product_category_id 查询
-		product.ProductCategoryId, err = models.GetProductCategoryById(product.ProductCategoryId.Id)
-		if err != nil {
-			c.ServerError(err)
-			return
-		}
-
 		productView.Id = product.Id
 		productView.Sn = product.Sn
 		productView.Name = product.Name
