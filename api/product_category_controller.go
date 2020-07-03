@@ -15,7 +15,7 @@ type ProductCategoryController struct {
 
 // URLMapping ...
 func (c *ProductCategoryController) URLMapping() {
-	c.Mapping("GetProductCategoryAll", c.GetProductCategoryAll)
+	c.Mapping("GetProductCategoryAll", c.GetAllProductCategory)
 	c.Mapping("AddProductCategory", c.AddProductCategory)
 	c.Mapping("GetOneProductCategory", c.GetOneProductCategory)
 }
@@ -49,7 +49,7 @@ func (c *ProductCategoryController) AddProductCategory() {
 		return
 	}
 	// parentId
-	if v := c.GetString("parent_id"); v != "" {
+	if v := c.GetString("parentId"); v != "" {
 		parentId, _ = strconv.Atoi(v)
 	}
 	// orders
@@ -61,11 +61,11 @@ func (c *ProductCategoryController) AddProductCategory() {
 		promotions = strings.Split(v, ",")
 	}
 	// is_top
-	if v := c.GetString("is_top"); v != "" {
+	if v := c.GetString("isTop"); v != "" {
 		isTop, _ = strconv.Atoi(v)
 	}
 	// is_marketable
-	if v := c.GetString("is_marketable"); v != "" {
+	if v := c.GetString("isMarketable"); v != "" {
 		isMarketable, _ = strconv.Atoi(v)
 	}
 	// is_show
@@ -182,7 +182,7 @@ func (c *ProductCategoryController) GetOneProductCategory() {
 // @router /all [get]
 // @Success 200 {object} model_view.ProductCategory
 // @Failure 500
-func (c *ProductCategoryController) GetProductCategoryAll() {
+func (c *ProductCategoryController) GetAllProductCategory() {
 	/**
 	 * 默认查询所有未删除分类
 	 */
@@ -267,7 +267,7 @@ func (c *ProductCategoryController) UpdateProductCategory() {
 		return
 	}
 	// parentId
-	if v := c.GetString("parent_id"); v != "" {
+	if v := c.GetString("parentId"); v != "" {
 		parentId, _ = strconv.Atoi(v)
 	}
 	// orders
@@ -279,15 +279,15 @@ func (c *ProductCategoryController) UpdateProductCategory() {
 		promotions = strings.Split(v, ",")
 	}
 	// is_top
-	if v := c.GetString("is_top"); v != "" {
+	if v := c.GetString("isTop"); v != "" {
 		isTop, _ = strconv.Atoi(v)
 	}
 	// is_marketable
-	if v := c.GetString("is_marketable"); v != "" {
+	if v := c.GetString("isMarketable"); v != "" {
 		isMarketable, _ = strconv.Atoi(v)
 	}
 	// is_show
-	if v := c.GetString("is_show"); v != "" {
+	if v := c.GetString("isShow"); v != "" {
 		isShow, _ = strconv.Atoi(v)
 	}
 
