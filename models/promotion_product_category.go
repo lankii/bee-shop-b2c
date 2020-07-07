@@ -10,8 +10,7 @@ type PromotionProductCategory struct {
 	ProductCategories int `orm:"column(product_categories);" description:"商品分类Id"`
 }
 
-// AddPromotionProductCategory insert a new Admin into database and returns
-// last inserted Id on success.
+// AddPromotionProductCategory insert a new PromotionProductCategory into database
 func AddPromotionProductCategory(promotions int, productCategories int) (err error) {
 	o := orm.NewOrm()
 	sql := "INSERT INTO promotion_product_category (promotions, product_categories) VALUES(?, ?)"

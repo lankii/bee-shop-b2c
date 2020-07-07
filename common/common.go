@@ -10,6 +10,11 @@ func AppKey() string {
 	return beego.AppConfig.DefaultString("app_key", "beeShopB2C")
 }
 
+// imageUrl
+func GetImageUrlPrefix() string {
+	return beego.AppConfig.DefaultString("image_url", "http://localhost:8888")
+}
+
 // 正则表达式
 const RegexpEmail = `^(\w)+(\.\w+)*@(\w)+((\.\w+)+)$`
 

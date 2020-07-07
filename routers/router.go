@@ -359,6 +359,12 @@ func init() {
 				&api.TagController{},
 			),
 		),
+
+		beego.NSNamespace("/upload",
+			beego.NSInclude(
+				&api.UploadController{},
+			),
+		),
 	)
 	beego.AddNamespace(ns)
 }

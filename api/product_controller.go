@@ -6,7 +6,6 @@ import (
 	"cleverbamboo.com/bee-shop-b2c/model_views"
 	"cleverbamboo.com/bee-shop-b2c/models"
 	"encoding/json"
-	"github.com/astaxie/beego/logs"
 	"strconv"
 	"strings"
 )
@@ -22,7 +21,6 @@ func (c *ProductController) URLMapping() {
 	c.Mapping("UpdateProduct", c.UpdateProduct)
 }
 
-// AddProduct ...
 // @Title Add Product
 // @Description create Product
 // @Success 201
@@ -39,70 +37,88 @@ func (c *ProductController) AddProduct() {
 	var image string
 	var unit string
 	var point int64
+	var stock int
 	var brand int
+	var tag []string
 	var keyword string
+	var isTop int
+	var isMarketable int
+	var isList int
 
 	// productCategoryId
 	if v := c.GetString("productCategoryId"); v != "" {
 		productCategoryId, _ = strconv.Atoi(v)
-		logs.Info("productCategoryId:", productCategoryId)
 	}
 	// productType
 	if v := c.GetString("productType"); v != "" {
 		productType, _ = strconv.Atoi(v)
-		logs.Info("productType:", productType)
 	}
-	// name
+	// caption
 	if v := c.GetString("caption"); v != "" {
 		caption = v
-		logs.Info("caption:", caption)
 	}
 	// name
 	if v := c.GetString("name"); v != "" {
 		name = v
-		logs.Info("name:", name)
 	}
 	// price
 	if v := c.GetString("price"); v != "" {
 		price, _ = strconv.ParseFloat(v, 64)
-		logs.Info("price:", price)
 	}
 	// cost
 	if v := c.GetString("cost"); v != "" {
 		cost, _ = strconv.ParseFloat(v, 64)
-		logs.Info("cost:", cost)
 	}
-	// cost
+	// marketPrice
 	if v := c.GetString("marketPrice"); v != "" {
 		marketPrice, _ = strconv.ParseFloat(v, 64)
-		logs.Info("cost:", marketPrice)
 	}
 	// image
 	if v := c.GetString("image"); v != "" {
 		image = v
-		logs.Info("image:", image)
 	}
 	// unit
 	if v := c.GetString("unit"); v != "" {
 		unit = v
-		logs.Info("unit:", unit)
 	}
 	// point
 	if v := c.GetString("point"); v != "" {
 		point, _ = strconv.ParseInt(v, 10, 64)
-		logs.Info("unit:", point)
+	}
+	// stock
+	if v := c.GetString("stock"); v != "" {
+		stock, _ = strconv.Atoi(v)
 	}
 	// brand
 	if v := c.GetString("brand"); v != "" {
 		brand, _ = strconv.Atoi(v)
-		logs.Info("unit:", brand)
+	}
+	// tag
+	if v := c.GetString("tag"); v != "" {
+		tag = strings.Split(v, ",")
 	}
 	// keyword
 	if v := c.GetString("keyword"); v != "" {
 		keyword = v
-		logs.Info("keyword:", keyword)
 	}
+	// is_top
+	if v := c.GetString("isTop"); v != "" {
+		isTop, _ = strconv.Atoi(v)
+	}
+	// is_marketable
+	if v := c.GetString("isMarketable"); v != "" {
+		isMarketable, _ = strconv.Atoi(v)
+	}
+	// is_list
+	if v := c.GetString("isList"); v != "" {
+		isList, _ = strconv.Atoi(v)
+	}
+
 	var product models.Product
+
+	/**
+	 * 商品名称不能相同
+	 */
 
 	/**
 	 * 雪花算法
@@ -124,15 +140,31 @@ func (c *ProductController) AddProduct() {
 	product.Image = image
 	product.Unit = unit
 	product.Point = point
-	// TODO tag
+	product.Stock = stock
 	product.BrandId = &models.Brand{Id: brand}
 	product.Keyword = keyword
+	product.IsTop = int8(isTop)
+	product.IsMarketable = int8(isMarketable)
+	product.IsList = int8(isList)
 
-	_, err = models.AddProduct(&product)
+	id, err := models.AddProduct(&product)
 	if err != nil {
 		c.ServerError(err)
 		return
 	}
+	/**
+	 * tag
+	 */
+	if len(tag) > 0 {
+		for _, tag := range tag {
+			tag, _ := strconv.Atoi(tag)
+			if err = models.AddProductTag(int(id), tag); err != nil {
+				c.ServerError(err)
+				return
+			}
+		}
+	}
+
 	c.JsonResult(common.GetHttpStatus("created"), common.ErrOK, common.Success, nil)
 }
 
