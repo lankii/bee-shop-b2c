@@ -12,7 +12,7 @@ type TagController struct {
 	BaseController
 }
 
-// @router /all [get]
+// @router / [get]
 func (c *TagController) GetAllTag() {
 	var query = make(map[string]string)
 	var limit int64 = 10

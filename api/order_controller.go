@@ -65,7 +65,7 @@ func (c *OrderController) UpdateOrder() {
 // @Param	pageSize	query	int	    false	"Limit the size of result set. Must be an integer"
 // @Success 200 {object} model_views.Order
 // @Failure 500
-// @router /all [get]
+// @router / [get]
 func (c *OrderController) GetAllOrder() {
 	var sortby []string
 	var order []string

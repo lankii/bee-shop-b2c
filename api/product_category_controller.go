@@ -179,7 +179,7 @@ func (c *ProductCategoryController) GetOneProductCategory() {
 
 // @Title GetProductCategoryAll
 // @Description Get all product category by some filed
-// @router /all [get]
+// @router / [get]
 // @Success 200 {object} model_view.ProductCategory
 // @Failure 500
 func (c *ProductCategoryController) GetAllProductCategory() {

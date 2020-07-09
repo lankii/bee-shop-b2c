@@ -11,7 +11,7 @@ type BrandController struct {
 	BaseController
 }
 
-// @router /all [get]
+// @router / [get]
 func (c *BrandController) GetAllBrand() {
 	var query = make(map[string]string)
 	var limit int64

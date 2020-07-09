@@ -17,7 +17,7 @@ func (c *PromotionController) URLMapping() {
 
 // @Title GetAllPromotion
 // @Description Get all promotion by some filed
-// @router /all [get]
+// @router / [get]
 func (c *PromotionController) GetAllPromotion() {
 	var query map[string]string
 	query = make(map[string]string)

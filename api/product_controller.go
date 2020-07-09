@@ -175,7 +175,7 @@ func (c *ProductController) AddProduct() {
 // @Param	order	    query	string	false	"Order corresponding to each sortby field, if single value, apply to all sortby fields. e.g. desc,asc ...
 // @Param	pageNumber	query	string	false	"Start position of result set. Must be an integer"
 // @Param	pageSize	query	int	    false	"Limit the size of result set. Must be an integer"
-// @router /all [get]
+// @router / [get]
 // @Success 200 {object} model_views.Product
 // @Failure 500
 func (c *ProductController) GetAllProduct() {
