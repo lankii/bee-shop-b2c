@@ -23,6 +23,7 @@ func (c *UploadController) URLMapping() {
 // @Title Upload image
 // @router / [post]
 func (c *UploadController) Upload() {
+	// TODO 图片 source、large、medium、thumbnail
 	fileData, fileHeader, err := c.GetFile("upload")
 	if err != nil {
 		c.ServerError(err)
@@ -35,6 +36,9 @@ func (c *UploadController) Upload() {
 	fileExt := filepath.Ext(fileHeader.Filename)
 	if fileExt == ".jpg" || fileExt == ".png" || fileExt == ".gif" || fileExt == ".jpeg" {
 		fileType = "image"
+	} else {
+		c.JsonResult(common.GetHttpStatus("ok"), common.ErrOK, common.Fail, "仅支持 jpg/png/gif/jpeg 格式")
+		return
 	}
 	// 文件夹路径
 	fileDir := fmt.Sprintf("static/upload/%s/%d/%d/%d", fileType, now.Year(), now.Month(), now.Day())

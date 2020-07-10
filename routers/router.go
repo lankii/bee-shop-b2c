@@ -236,12 +236,6 @@ func init() {
 			),
 		),
 
-		beego.NSNamespace("/pms_project",
-			beego.NSInclude(
-				&controllers.PmsProjectController{},
-			),
-		),
-
 		beego.NSNamespace("/product",
 			beego.NSInclude(
 				&controllers.ProductController{},

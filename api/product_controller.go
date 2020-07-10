@@ -44,6 +44,8 @@ func (c *ProductController) AddProduct() {
 	var isTop int
 	var isMarketable int
 	var isList int
+	var introduction string
+	var productImage []string
 
 	// productCategoryId
 	if v := c.GetString("productCategoryId"); v != "" {
@@ -113,6 +115,14 @@ func (c *ProductController) AddProduct() {
 	if v := c.GetString("isList"); v != "" {
 		isList, _ = strconv.Atoi(v)
 	}
+	// introduction
+	if v := c.GetString("introduction"); v != "" {
+		introduction = v
+	}
+	// productImage
+	if v := c.GetString("productImage"); v != "" {
+		productImage = strings.Split(v, ",")
+	}
 
 	var product models.Product
 
@@ -146,6 +156,11 @@ func (c *ProductController) AddProduct() {
 	product.IsTop = int8(isTop)
 	product.IsMarketable = int8(isMarketable)
 	product.IsList = int8(isList)
+	product.Introduction = introduction
+
+	if len(productImage) > 0 {
+
+	}
 
 	id, err := models.AddProduct(&product)
 	if err != nil {

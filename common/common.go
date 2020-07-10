@@ -12,7 +12,7 @@ func AppKey() string {
 
 // imageUrl
 func GetImageUrlPrefix() string {
-	return beego.AppConfig.DefaultString("image_url", "http://localhost:8888")
+	return beego.AppConfig.DefaultString("imageUrl", "http://localhost:8888")
 }
 
 // 正则表达式
